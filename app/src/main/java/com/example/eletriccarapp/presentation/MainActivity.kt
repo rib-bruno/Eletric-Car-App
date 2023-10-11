@@ -4,8 +4,11 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.*
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eletriccarapp.R
+import com.example.eletriccarapp.data.CarFactory
+import com.example.eletriccarapp.presentation.adapter.CarAdapter
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,17 +30,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun setupList() {
-        var dados = arrayOf(
-            "Cupcacke",
-            "Donut",
-            "Froyo",
-            "Gingerbread",
-            "Honeycomb",
-            "Ice Cream Sandwich",
-            "Jelly Bean"
-        )
-       // val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, dados)
-      //  lista.adapter = adapter
+        val adapter = CarAdapter(CarFactory.list)
+        //falando pro layout que ele tá trabalhando com uma lista e que ele vai suar o manager como recurso.
+        //no xml
+        listaCarros.adapter = adapter
     }
 
 
