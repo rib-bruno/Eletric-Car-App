@@ -16,8 +16,6 @@ import com.google.android.material.tabs.TabLayout
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var btnCalcular: Button
-    lateinit var listaCarros: RecyclerView
     lateinit var tabLayout: TabLayout
     lateinit var viewPager: ViewPager2
 
@@ -25,33 +23,20 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d("Lifecycle", "CREATE")
-
         setContentView(R.layout.activity_main)
         setupView()
-        setupListeners()
-        setupList()
         setupTabs()
     }
 
-
     fun setupView() {
         tabLayout = findViewById(R.id.tab_layout)
-        btnCalcular = findViewById(R.id.btn_calcular)
-        listaCarros = findViewById(R.id.rv_lista_carros)
         viewPager = findViewById(R.id.vp_viewpager)
-    }
-
-    fun setupList() {
-        val adapter = CarAdapter(CarFactory.list)
-        //falando pro layout que ele tá trabalhando com uma lista e que ele vai suar o manager como recurso.
-        //no xml
-        listaCarros.adapter = adapter
     }
 
     fun setupTabs() {
         val tabsAdapter = TabsAdapter(this)
         viewPager.adapter = tabsAdapter
-        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 tab?.let {
                     viewPager.currentItem = it.position
@@ -75,12 +60,5 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    fun setupListeners() {
-        btnCalcular.setOnClickListener {
-            // calcular()
-            startActivity(Intent(this, CalcularAutonomiaActivity::class.java))
-        }
-
-    }
 
 }

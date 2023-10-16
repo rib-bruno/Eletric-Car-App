@@ -1,14 +1,18 @@
 package com.example.eletriccarapp.presentation
 
 import android.content.Intent
+import android.os.AsyncTask
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.eletriccarapp.R
+import java.net.HttpURLConnection
+import java.net.URL
 
 class CalcularAutonomiaActivity : AppCompatActivity() {
 
@@ -50,4 +54,7 @@ class CalcularAutonomiaActivity : AppCompatActivity() {
 
         resultado.text = result.toString()
     }
+
+
+
 }
