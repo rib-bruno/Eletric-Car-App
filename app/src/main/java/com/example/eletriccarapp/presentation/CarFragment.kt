@@ -1,7 +1,11 @@
 package com.example.eletriccarapp.presentation
 
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.AsyncTask
+import android.os.Build
 import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
@@ -10,7 +14,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eletriccarapp.R
@@ -33,6 +40,8 @@ class CarFragment : Fragment() {
     lateinit var fabCalcular: FloatingActionButton
     lateinit var listaCarros: RecyclerView
     lateinit var progress: ProgressBar
+    lateinit var noInternetImage: ImageView
+    lateinit var noInternetText : TextView
 
     var carrosArray: ArrayList<Carro> = ArrayList()
 
@@ -45,27 +54,49 @@ class CarFragment : Fragment() {
         return inflater.inflate(R.layout.car_fragment, container, false)
     }
 
+    //só vai passar uma vez pro usuário
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupView(view)
         //setupList()
         setupListeners()
-        callService()
+
+
     }
 
-    //não estamos na activity, passar view como parâmetro pra suar o find
+    override fun onResume() {
+        super.onResume()
+        //check se tem internet - chamar servico
+        if(checkForInternet(context)) {
+            callService()
+        } else {
+            emptyState()
+        }
+    }
+
+    fun emptyState() {
+        progress.isVisible = false
+        listaCarros.isVisible = false
+        noInternetImage.isVisible = true
+        noInternetText.isVisible = true
+    }
+
+    //não estamos na activity, passar view como parâmetro pra usar o find/referencia no layout
     fun setupView(view: View) {
         view.apply {
             fabCalcular = findViewById(R.id.fab_calcular)
             listaCarros = findViewById(R.id.rv_lista_carros)
             progress = findViewById((R.id.pb_loader))
+            noInternetImage = findViewById(R.id.iv_empty_state)
+            noInternetText = findViewById(R.id.tv_no_wifi)
+
         }
     }
 
     fun setupList() {
         val carroAdapter = CarAdapter(carrosArray)
          listaCarros.apply {
-             visibility = View.VISIBLE
+             isVisible = true
              //falando pro layout que ele tá trabalhando com uma lista e que ele vai usar o manager como recurso.
              //no xml
              adapter = carroAdapter
@@ -81,8 +112,34 @@ class CarFragment : Fragment() {
     }
     fun callService() {
         val urlBase = "https://igorbag.github.io/cars-api/cars.json"
+        progress.isVisible = true
         MyTask().execute(urlBase)
 
+
+    }
+
+    fun checkForInternet (context: Context?) : Boolean {
+        //serviço de conectividade
+        val connectivityManager = context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+            //recuperar aqui - se tem internet ativa
+            val network = connectivityManager.activeNetwork ?: return false
+
+            //se tem capacidade de conexão
+            val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+            return when {
+                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                else -> false
+            }
+        } else {
+            //quando não for android M
+            @Suppress("DEPRECATION")
+            val networkInfo =  connectivityManager.activeNetworkInfo ?: return false
+            @Suppress("DEPRECATION")
+            return networkInfo.isConnected
+        }
 
     }
 
@@ -166,7 +223,9 @@ class CarFragment : Fragment() {
                     carrosArray.add(model)
                 }
 
-                progress.visibility = View.GONE
+                progress.isVisible = false
+                noInternetImage.isVisible = false
+                noInternetText.isVisible = false
                 //quando tiver populado/percorrer as informações, listar os dados com as informações que tiver disponível
                 setupList()
             } catch (ex: Exception) {
