@@ -1,18 +1,13 @@
 package com.example.eletriccarapp.presentation
 
-import android.content.Intent
-import android.os.AsyncTask
+import android.content.Context
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.eletriccarapp.R
-import java.net.HttpURLConnection
-import java.net.URL
 
 class CalcularAutonomiaActivity : AppCompatActivity() {
 
@@ -27,6 +22,12 @@ class CalcularAutonomiaActivity : AppCompatActivity() {
         setContentView(R.layout.activity_calcular_autonomia)
         setupView()
         setupListeners()
+        setupCachedResult()
+    }
+
+    private fun setupCachedResult() {
+        val valorCalculado = getSharedPref()
+        resultado.text = valorCalculado.toString()
     }
 
     fun setupView() {
@@ -53,8 +54,22 @@ class CalcularAutonomiaActivity : AppCompatActivity() {
         val result = preco / km
 
         resultado.text = result.toString()
+        saveSharedPref(result)
     }
 
+    fun saveSharedPref(resultado: Float) {
+        //informar que a preferencia é do escopo do app/privada pro uso do app
+        val sharedPref = getPreferences(Context.MODE_PRIVATE) ?: return
+        with(sharedPref.edit()) {
+            putFloat(getString(R.string.saved_calc), resultado)
+            apply()
+        }
+    }
 
+    fun getSharedPref(): Float {
+        val sharedPref = getPreferences(Context.MODE_PRIVATE)
+        return sharedPref.getFloat(getString(R.string.saved_calc), 0.0f)
+
+    }
 
 }

@@ -45,8 +45,8 @@ class CarFragment : Fragment() {
     lateinit var listaCarros: RecyclerView
     lateinit var progress: ProgressBar
     lateinit var noInternetImage: ImageView
-    lateinit var noInternetText : TextView
-    lateinit var carsApi : CarsApi
+    lateinit var noInternetText: TextView
+    lateinit var carsApi: CarsApi
 
     var carrosArray: ArrayList<Carro> = ArrayList()
 
@@ -73,8 +73,8 @@ class CarFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         //check se tem internet - chamar servico
-        if(checkForInternet(context)) {
-           // callService() -> outra forma de chamar servicos
+        if (checkForInternet(context)) {
+            // callService() -> outra forma de chamar servicos
             getAllCars()
         } else {
             emptyState()
@@ -134,12 +134,15 @@ class CarFragment : Fragment() {
 
     fun setupList(lista: List<Carro>) {
         val carroAdapter = CarAdapter(lista)
-         listaCarros.apply {
-             isVisible = true
-             //falando pro layout que ele tá trabalhando com uma lista e que ele vai usar o manager como recurso.
-             //no xml
-             adapter = carroAdapter
-         }
+        listaCarros.apply {
+            isVisible = true
+            //falando pro layout que ele tá trabalhando com uma lista e que ele vai usar o manager como recurso.
+            //no xml
+            adapter = carroAdapter
+        }
+        carroAdapter.carItemLister = { carro ->
+            val bateria = carro.bateria
+        }
     }
 
     fun setupListeners() {
@@ -156,9 +159,10 @@ class CarFragment : Fragment() {
 //        MyTask().execute(urlBase)
 //    }
 
-    fun checkForInternet (context: Context?) : Boolean {
+    fun checkForInternet(context: Context?): Boolean {
         //serviço de conectividade
-        val connectivityManager = context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
             //recuperar aqui - se tem internet ativa
@@ -174,7 +178,7 @@ class CarFragment : Fragment() {
         } else {
             //quando não for android M
             @Suppress("DEPRECATION")
-            val networkInfo =  connectivityManager.activeNetworkInfo ?: return false
+            val networkInfo = connectivityManager.activeNetworkInfo ?: return false
             @Suppress("DEPRECATION")
             return networkInfo.isConnected
         }
@@ -257,7 +261,8 @@ class CarFragment : Fragment() {
 //                        bateria = bateria,
 //                        potencia = potencia,
 //                        recarga = recarga,
-//                        urlPhoto = urlPhoto
+//                        urlPhoto = urlPhoto,
+    //                    isFavorite = false
 //                    )
 //                    carrosArray.add(model)
 //                }
