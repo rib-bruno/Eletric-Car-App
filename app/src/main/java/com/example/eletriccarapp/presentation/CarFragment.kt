@@ -1,19 +1,15 @@
 package com.example.eletriccarapp.presentation
 
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
-import android.os.Parcel
-import android.os.Parcelable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -22,21 +18,20 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eletriccarapp.R
-import com.example.eletriccarapp.data.CarFactory
 import com.example.eletriccarapp.data.CarsApi
+import com.example.eletriccarapp.data.local.CarRepository
+import com.example.eletriccarapp.data.local.CarrosContract.CarEntry.COLUMN_NAME_BATERIA
+import com.example.eletriccarapp.data.local.CarrosContract.CarEntry.COLUMN_NAME_POTENCIA
+import com.example.eletriccarapp.data.local.CarrosContract.CarEntry.COLUMN_NAME_PRECO
+import com.example.eletriccarapp.data.local.CarrosContract.CarEntry.COLUMN_NAME_RECARGA
+import com.example.eletriccarapp.data.local.CarrosContract.CarEntry.COLUMN_NAME_URL_PHOTO
+import com.example.eletriccarapp.data.local.CarrosContract.CarEntry.TABLE_NAME
+import com.example.eletriccarapp.data.local.CarsDbHelper
 import com.example.eletriccarapp.domain.Carro
 import com.example.eletriccarapp.presentation.adapter.CarAdapter
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import org.json.JSONArray
-import org.json.JSONObject
-import org.json.JSONTokener
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.BufferedReader
-import java.io.InputStream
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
-import java.net.URL
 
 
 class CarFragment : Fragment() {
@@ -141,7 +136,8 @@ class CarFragment : Fragment() {
             adapter = carroAdapter
         }
         carroAdapter.carItemLister = { carro ->
-            val bateria = carro.bateria
+            val isSaved = CarRepository(requireContext()).save(carro)
+
         }
     }
 
@@ -279,5 +275,23 @@ class CarFragment : Fragment() {
 //        }
 //
 //    }
+
+    fun saveOnDatabase(carro:Carro) {
+        //pega o contexto em que a gente está
+        val dbHelper = CarsDbHelper(requireContext())
+        //abra uma forma de escrever nele
+        val db = dbHelper.writableDatabase
+
+        //gravar os dados na hora que usuario clicar em favorito
+        val values = ContentValues().apply {
+            put(COLUMN_NAME_PRECO, carro.preco)
+            put(COLUMN_NAME_BATERIA, carro.bateria)
+            put(COLUMN_NAME_POTENCIA, carro.potencia)
+            put(COLUMN_NAME_RECARGA, carro.recarga)
+            put(COLUMN_NAME_URL_PHOTO, carro.urlPhoto)
+        }
+        //conseguir salvar as informações no banco de dados
+        val newRegister = db?.insert(TABLE_NAME, null, values)
+    }
 
 }
