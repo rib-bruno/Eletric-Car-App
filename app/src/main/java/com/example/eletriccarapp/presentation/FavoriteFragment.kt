@@ -45,7 +45,7 @@ class FavoriteFragment: Fragment() {
 
     fun setupList() {
         val cars = getCarsOnLocalDb()
-        val carroAdapter = CarAdapter(cars)
+        val carroAdapter = CarAdapter(cars, isFavoriteScreen = true)
         listaCarrosFavoritos.apply {
             isVisible = true
             //falando pro layout que ele tá trabalhando com uma lista e que ele vai usar o manager como recurso.

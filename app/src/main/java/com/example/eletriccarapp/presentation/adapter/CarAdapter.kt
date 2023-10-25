@@ -11,7 +11,7 @@ import com.example.eletriccarapp.domain.Carro
 
 
 //passar a listagem de carros
-class CarAdapter(private val carros: List<Carro>) : RecyclerView.Adapter<CarAdapter.ViewHolder>() {
+class CarAdapter(private val carros: List<Carro>, private val isFavoriteScreen :Boolean = false ) : RecyclerView.Adapter<CarAdapter.ViewHolder>() {
 
     //callback para acessar no fragment
     var carItemLister : (Carro) -> Unit = {}
@@ -30,6 +30,11 @@ class CarAdapter(private val carros: List<Carro>) : RecyclerView.Adapter<CarAdap
         holder.potencia.text = carros[position].potencia
         holder.recarga.text = carros[position].recarga
 
+        //se for favorito de cara vai settar o star
+        if(isFavoriteScreen) {
+            holder.favorito.setImageResource(R.drawable.ic_star_selected)
+        }
+
         holder.favorito.setOnClickListener {
             val carro = carros[position]
             carItemLister(carro)
@@ -41,15 +46,14 @@ class CarAdapter(private val carros: List<Carro>) : RecyclerView.Adapter<CarAdap
         carro: Carro,
         holder: ViewHolder
     ) {
-        //primeira vez que clickar, ele terá que ficar o contrário do que foi setado(false), na segunda será contrário de true
-        carro.isFavorite = !carro.isFavorite
+            //primeira vez que clickar, ele terá que ficar o contrário do que foi setado(false), na segunda será contrário de true
+            carro.isFavorite = !carro.isFavorite
 
-        if (carro.isFavorite) {
-            //se estiver farotio, ele estará com outro ícone
-            holder.favorito.setImageResource(R.drawable.ic_star_selected)
-        } else {
-            holder.favorito.setImageResource(R.drawable.ic_star_2)
-        }
+            if (carro.isFavorite) {
+                //se estiver farotio, ele estará com outro ícone
+                holder.favorito.setImageResource(R.drawable.ic_star_selected)
+            } else {
+                holder.favorito.setImageResource(R.drawable.ic_star_2) }
     }
 
     //pega a quantidade de itens da lista
