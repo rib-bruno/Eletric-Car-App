@@ -16,7 +16,7 @@ class CarAdapter(private val carros: List<Carro>, private val isFavoriteScreen :
     //callback para acessar no fragment
     var carItemLister : (Carro) -> Unit = {}
 
-    //recuperar o layout criadocria uma nova view.
+    //recuperar o layout criado/cria uma nova view.
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.carro_item, parent, false)
 

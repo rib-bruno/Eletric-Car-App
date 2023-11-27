@@ -36,7 +36,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class CarFragment : Fragment() {
 
-    lateinit var fabCalcular: FloatingActionButton
     lateinit var listaCarros: RecyclerView
     lateinit var progress: ProgressBar
     lateinit var noInternetImage: ImageView
@@ -60,9 +59,6 @@ class CarFragment : Fragment() {
         setupRetrofit()
         setupView(view)
         //setupList()
-        setupListeners()
-
-
     }
 
     override fun onResume() {
@@ -118,7 +114,6 @@ class CarFragment : Fragment() {
     //não estamos na activity, passar view como parâmetro pra usar o find/referencia no layout
     fun setupView(view: View) {
         view.apply {
-            fabCalcular = findViewById(R.id.fab_calcular)
             listaCarros = findViewById(R.id.rv_lista_carros)
             progress = findViewById((R.id.pb_loader))
             noInternetImage = findViewById(R.id.iv_empty_state)
@@ -138,14 +133,6 @@ class CarFragment : Fragment() {
         carroAdapter.carItemLister = { carro ->
             val isSaved = CarRepository(requireContext()).saveIfNotExist(carro)
 
-        }
-    }
-
-    fun setupListeners() {
-        fabCalcular.setOnClickListener {
-            //não conseguimos usar o this pra acessar o contexto num fragment
-            startActivity(Intent(context, CalcularAutonomiaActivity::class.java))
-            //MyTask().execute("https://github.com/igorbag/cars-api/blob/main/cars.json")
         }
     }
 
